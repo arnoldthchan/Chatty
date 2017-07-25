@@ -6,9 +6,12 @@ import Message from './Message.jsx';
 class MessageList extends Component {
   render() {
     console.log("Rendering <MessageList/>")
+    const listMessages = this.props.messages.map((message, key) =>
+      <Message username={message.username} content={message.content} key={key}/>
+    );
     return (
       <div id="message-list">
-        <Message />
+        {listMessages}
       </div>
     );
   }
