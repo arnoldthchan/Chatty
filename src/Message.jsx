@@ -4,7 +4,7 @@ import ReactDOM from 'react-dom';
 
 class Message extends Component {
   render() {
-    console.log("Rendering <Message/>")
+    // console.log("Rendering <Message/>")
     return (
       <div className="message">
         <span className="message-username">{this.props.username}</span>
