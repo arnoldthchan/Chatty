@@ -8,7 +8,7 @@ class App extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      currentUser: {name: "Anonymous"},
+      currentUser: {name: "Anonymous", default: "Anonymous"},
       messages: [] // messages coming from the server will be stored here as they arrive
     };
     // this.enterPress = this.enterPress.bind(this);
@@ -28,9 +28,8 @@ class App extends Component {
   nameChange = (event) => {
     if (event.target.value){
       this.setState({currentUser:{name: event.target.value}})
-      console.log(this.state.name)
     } else{
-      this.setState({currentUser:{name: "Anonymous"}})
+      this.setState({currentUser:{name: this.state.currentUser.default}})
     }
   }
   componentDidMount() {
