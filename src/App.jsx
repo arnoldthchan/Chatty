@@ -8,10 +8,8 @@ class App extends Component {
     super(props);
     this.state = {
       userCount: 0,
-      currentUser: {
-        name: "Anonymous",
-        color: 'blue'
-      },
+      color: "black",
+      currentUser: {name: "Anonymous"},
       messages: [] // messages coming from the server will be stored here as they arrive
     };
     // this.messageSend = this.messageSend.bind(this);
@@ -22,7 +20,8 @@ class App extends Component {
     if(event.key === 'Enter' && event.target.value !== ""){
       const newMessage = {type: "postMessage",
         username: this.state.currentUser.name,
-        content: event.target.value
+        content: event.target.value,
+        color: this.state.currentUser.color
       };
       this.socket.send(JSON.stringify(newMessage));
       event.target.value = "";
@@ -32,7 +31,6 @@ class App extends Component {
   postNotification = (event) => {
     const name = this.state.currentUser.name
     const notification = {type: "postNotification"}
-
     if(event.target.value && event.target.value !== name){
       notification.content = `${name} has changed their name to ${event.target.value}.`
       this.setState({currentUser:{name: event.target.value}})
@@ -85,7 +83,8 @@ class App extends Component {
           this.setState({userCount: data.userCount})
           break;
         case "colorAssign":
-          console.log('COLOR CHANGE!')
+          // handle colour assignment for user
+          this.setState({color: data.color})
           break;
         default:
           // show an error in the console if the message type is unknown
@@ -102,7 +101,7 @@ class App extends Component {
           <a href="/" className="navbar-brand" >Chatty</a>
           <div id="userCount"> {this.state.userCount} Users Online </div>
         </nav>
-        <MessageList messages={this.state.messages}>
+        <MessageList messages={this.state.messages} color={this.state.color}>
           <main className="messages"/>
         </MessageList>
         <ChatBar currentUser={this.state.currentUser} messageSend={this.messageSend} postNotification={this.postNotification} />

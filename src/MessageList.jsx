@@ -11,7 +11,7 @@ class MessageList extends Component {
         content={message.content}
         key={message.id}
         type={message.type}
-        color={message.color}
+        color={this.props.color}
       />
     );
     return (
