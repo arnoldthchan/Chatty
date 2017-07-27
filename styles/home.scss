@@ -40,7 +40,9 @@ h1 {
 .chatbar-username {
   flex: 2;
 }
-
+#message-list{
+  overflow-y: scroll;
+}
 .message {
   display: flex;
   padding: 5px;

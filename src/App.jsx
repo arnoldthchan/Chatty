@@ -8,7 +8,10 @@ class App extends Component {
     super(props);
     this.state = {
       userCount: 0,
-      currentUser: {name: "Anonymous1"},
+      currentUser: {
+        name: "Anonymous",
+        color: 'blue'
+      },
       messages: [] // messages coming from the server will be stored here as they arrive
     };
     // this.messageSend = this.messageSend.bind(this);
@@ -27,16 +30,21 @@ class App extends Component {
   }
 
   postNotification = (event) => {
-    if(event.target.value !== ""){
-      const name = this.state.currentUser.name
-      const notification = {
-        type: "postNotification",
-        content: `${name} has changed their name to ${event.target.value}.`,
-      }
+    const name = this.state.currentUser.name
+    const notification = {type: "postNotification"}
+
+    if(event.target.value && event.target.value !== name){
+      notification.content = `${name} has changed their name to ${event.target.value}.`
       this.setState({currentUser:{name: event.target.value}})
       this.socket.send(JSON.stringify(notification))
+    } else if (!event.target.value && name !== "Anonymous"){
+        notification.content = `${name} has changed their name to Anonymous.`
+        this.setState({currentUser:{name: "Anonymous"}})
+        this.socket.send(JSON.stringify(notification))
+      }
     }
-  }
+
+
 
   componentDidMount() {
     // console.log("componentDidMount <App />");
@@ -50,8 +58,7 @@ class App extends Component {
       // Add a new message to the list of messages in the data store
       const newMessage = {
         id: Date.now(),
-        type: "incomingMessage",
-        username: "ChattyBot",
+        type: "incomingNotification",
         content: "Hey welcome to Chatty! Type some stuff"
       };
       let messages = this.state.messages.concat(newMessage);
@@ -75,8 +82,10 @@ class App extends Component {
           // handle incoming notification
           break;
         case "userCountChanged":
-          console.log(`NEW USER COUNT: ${data.userCount}`)
           this.setState({userCount: data.userCount})
+          break;
+        case "colorAssign":
+          console.log('COLOR CHANGE!')
           break;
         default:
           // show an error in the console if the message type is unknown

@@ -14,15 +14,22 @@ class Message extends Component {
         )
         break;
       case "incomingMessage":
+        let messageStyle = {
+          color: this.props.color
+        }
         return(
-          <div className="message">
-            <span className="message-username"> {this.props.username} </span>
-            <span className="message-content">{this.props.content}</span>
+          <div className="message" >
+            <span className="message-username" style={messageStyle}>
+              {this.props.username}
+            </span>
+            <span className="message-content">
+              {this.props.content}
+            </span>
           </div>
         )
         break;
       default:
-        throw new Error("Unknown event type " + data.type);
+        throw new Error("Unknown event type " + this.props.type);
     }
   }
 }
