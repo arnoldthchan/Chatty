@@ -6,6 +6,7 @@ class Message extends Component {
   render() {
     // console.log("Rendering <Message/>")
     switch(this.props.type){
+
       case "incomingNotification":
         return(
           <div className="message system">
@@ -13,6 +14,7 @@ class Message extends Component {
           </div>
         )
         break;
+
       case "incomingMessage":
         return(
           <div className="message">
@@ -21,8 +23,8 @@ class Message extends Component {
           </div>
         )
         break;
-      default:
-        throw new Error("Unknown event type " + data.type);
+      // default:
+      //   throw new Error("Unknown event type " + data.type);
     }
   }
 }

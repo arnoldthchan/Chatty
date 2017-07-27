@@ -7,6 +7,7 @@ class App extends Component {
   constructor(props) {
     super(props);
     this.state = {
+      userCount: 0,
       currentUser: {name: "Anonymous1"},
       messages: [] // messages coming from the server will be stored here as they arrive
     };
@@ -46,7 +47,6 @@ class App extends Component {
     this.socket.onmessage = (event) => {
       const data = JSON.parse(event.data);
       const messages = this.state.messages.concat(data);
-
       // The socket event data is encoded as a JSON string.
       // This line turns it into an object
       switch(data.type) {
@@ -57,6 +57,10 @@ class App extends Component {
         case "incomingNotification":
           this.setState({messages: messages})
           // handle incoming notification
+          break;
+        case "userCountChanged":
+          console.log(`NEW USER COUNT: ${data.userCount}`)
+          this.setState({userCount: data.userCount})
           break;
         default:
           // show an error in the console if the message type is unknown
@@ -83,6 +87,7 @@ class App extends Component {
       <div>
         <nav className="navbar">
           <a href="/" className="navbar-brand" >Chatty</a>
+          <div id="userCount"> {this.state.userCount} Users Online </div>
         </nav>
         <MessageList messages={this.state.messages}>
           <main className="messages"/>
