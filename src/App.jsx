@@ -21,7 +21,7 @@ class App extends Component {
       const newMessage = {type: "postMessage",
         username: this.state.currentUser.name,
         content: event.target.value,
-        color: this.state.currentUser.color
+        color: this.state.color
       };
       this.socket.send(JSON.stringify(newMessage));
       event.target.value = "";
@@ -41,8 +41,6 @@ class App extends Component {
         this.socket.send(JSON.stringify(notification))
       }
     }
-
-
 
   componentDidMount() {
     // console.log("componentDidMount <App />");
@@ -84,7 +82,8 @@ class App extends Component {
           break;
         case "colorAssign":
           // handle colour assignment for user
-          this.setState({color: data.color})
+          console.log('RECEIVED COLOR');
+          this.setState({color: data.color});
           break;
         default:
           // show an error in the console if the message type is unknown
