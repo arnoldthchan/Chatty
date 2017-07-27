@@ -1,6 +1,5 @@
 import React, {Component} from 'react';
 import ReactDOM from 'react-dom';
-
 import MessageList from './MessageList.jsx';
 import ChatBar from './ChatBar.jsx';
 
@@ -8,49 +7,66 @@ class App extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      currentUser: {name: "Anonymous", default: "Anonymous"},
+      currentUser: {name: "Anonymous"},
       messages: [] // messages coming from the server will be stored here as they arrive
     };
-    // this.enterPress = this.enterPress.bind(this);
+    // this.messageSend = this.messageSend.bind(this);
     this.socket = new WebSocket("ws://localhost:3001");
   }
 
-  enterPress = (event) =>{
+  messageSend = (event) =>{
     if(event.key === 'Enter' && event.target.value !== ""){
-      console.log(event);
-      const newMessage = {id: Date.now(), username: this.state.currentUser.name, content: event.target.value};
-      // const messages = this.state.messages.concat(newMessage);
-      // this.setState({messages: messages});
+      const newMessage = {type: "postMessage",
+        id: Date.now(),
+        username: this.state.currentUser.name,
+        content: event.target.value
+      };
       this.socket.send(JSON.stringify(newMessage));
       event.target.value = "";
     }
   }
-  nameChange = (event) => {
-    if (event.target.value){
+  postNotification = (event) => {
+    if(event.target.value !== ""){
+      const name = this.state.currentUser.name
+      const notification = {
+        type: "postNotification",
+        content: `${name} has changed their name to ${event.target.value}.`,
+      }
       this.setState({currentUser:{name: event.target.value}})
-    } else{
-      this.setState({currentUser:{name: this.state.currentUser.default}})
+      this.socket.send(JSON.stringify(notification))
     }
   }
+
   componentDidMount() {
     // console.log("componentDidMount <App />");
-
     this.socket.onopen = () => {
       console.log("Connected to server");
     }
 
     this.socket.onmessage = (event) => {
-      const serMessage = JSON.parse(event.data);
-      // console.log('OnMessage from server:', serMessage);
-      const messages = this.state.messages.concat(serMessage);
-      this.setState({messages: messages});
-      // this.state.messages.push(serMessage);
+      const data = JSON.parse(event.data);
+      const messages = this.state.messages.concat(data);
+
+      // The socket event data is encoded as a JSON string.
+      // This line turns it into an object
+      switch(data.type) {
+        case "incomingMessage":
+          this.setState({messages: messages});
+          // handle incoming message
+          break;
+        case "incomingNotification":
+          this.setState({messages: messages})
+          // handle incoming notification
+          break;
+        default:
+          // show an error in the console if the message type is unknown
+          throw new Error("Unknown event type " + data.type);
+      }
     }
 
     //Simulates an incoming message with a timeout function
     // setTimeout(() => {
     //   console.log("Simulating incoming message");
-
     //   // Add a new message to the list of messages in the data store
     //   const newMessage = {id: 3, username: "Michelle", content: "Hello there!"};
     //   const messages = this.state.messages.concat(newMessage);
@@ -69,10 +85,11 @@ class App extends Component {
           <a href="/" className="navbar-brand" >Chatty</a>
         </nav>
         <MessageList messages={this.state.messages}>
-          <div className="message system">Anonymous1 changed their name to nomnom.</div>
+          <main className="messages"/>
+          <div className="message system" >Anonymous1 changed their name to nomnom.</div>
         </MessageList>
-        <main className="messages"/>
-        <ChatBar currentUser={this.state.currentUser} enterPress={this.enterPress} nameChange={this.nameChange}/>
+
+        <ChatBar currentUser={this.state.currentUser} messageSend={this.messageSend} postNotification={this.postNotification} />
       </div>
     );
   }
