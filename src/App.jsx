@@ -7,7 +7,7 @@ class App extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      currentUser: {name: "Anonymous"},
+      currentUser: {name: "Anonymous1"},
       messages: [] // messages coming from the server will be stored here as they arrive
     };
     // this.messageSend = this.messageSend.bind(this);
@@ -86,9 +86,7 @@ class App extends Component {
         </nav>
         <MessageList messages={this.state.messages}>
           <main className="messages"/>
-          <div className="message system" >Anonymous1 changed their name to nomnom.</div>
         </MessageList>
-
         <ChatBar currentUser={this.state.currentUser} messageSend={this.messageSend} postNotification={this.postNotification} />
       </div>
     );
