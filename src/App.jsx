@@ -18,7 +18,6 @@ class App extends Component {
   messageSend = (event) =>{
     if(event.key === 'Enter' && event.target.value !== ""){
       const newMessage = {type: "postMessage",
-        id: Date.now(),
         username: this.state.currentUser.name,
         content: event.target.value
       };
@@ -26,6 +25,7 @@ class App extends Component {
       event.target.value = "";
     }
   }
+
   postNotification = (event) => {
     if(event.target.value !== ""){
       const name = this.state.currentUser.name
@@ -43,6 +43,22 @@ class App extends Component {
     this.socket.onopen = () => {
       console.log("Connected to server");
     }
+
+    //Simulates an incoming message with a timeout function
+    setTimeout(() => {
+      console.log("Simulating welcome message");
+      // Add a new message to the list of messages in the data store
+      const newMessage = {
+        id: Date.now(),
+        type: "incomingMessage",
+        username: "ChattyBot",
+        content: "Hey welcome to Chatty! Type some stuff"
+      };
+      let messages = this.state.messages.concat(newMessage);
+      // Update the state of the app component.
+      // Calling setState will trigger a call to render() in App and all child components.
+      this.setState({messages: messages});
+    }, 1000);
 
     this.socket.onmessage = (event) => {
       const data = JSON.parse(event.data);
@@ -67,18 +83,6 @@ class App extends Component {
           throw new Error("Unknown event type " + data.type);
       }
     }
-
-    //Simulates an incoming message with a timeout function
-    // setTimeout(() => {
-    //   console.log("Simulating incoming message");
-    //   // Add a new message to the list of messages in the data store
-    //   const newMessage = {id: 3, username: "Michelle", content: "Hello there!"};
-    //   const messages = this.state.messages.concat(newMessage);
-    //   // Update the state of the app component.
-    //   // Calling setState will trigger a call to render() in App and all child components.
-    //   this.setState({messages: messages});
-    // }, 1500);
-
   }
 
   render() {
