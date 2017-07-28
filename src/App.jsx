@@ -3,8 +3,6 @@ import ReactDOM from 'react-dom';
 import MessageList from './MessageList.jsx';
 import ChatBar from './ChatBar.jsx';
 
-
-
 class App extends Component {
   constructor(props) {
     super(props);
@@ -14,10 +12,9 @@ class App extends Component {
       currentUser: {name: "Anonymous"},
       messages: [] // messages coming from the server will be stored here as they arrive
     };
-    // this.messageSend = this.messageSend.bind(this);
     this.socket = new WebSocket("ws://localhost:3001");
   }
-
+  //Handles for when messages are sent with enter
   messageSend = (event) =>{
     if(event.key === 'Enter' && event.target.value !== ""){
       const newMessage = {type: "postMessage",
@@ -29,24 +26,23 @@ class App extends Component {
       event.target.value = "";
     }
   }
-
-  scrollToTop = () => {
+  //Function that sends the message-list to the bottom/newest when called
+  scrollToBot = () => {
      var messageList = document.getElementById('message-list');
      messageList.scrollTop = messageList.scrollHeight - messageList.clientHeight;
   }
-
+  //Handles username changes
   postNotification = (event) => {
     const name = this.state.currentUser.name
     const notification = {type: "postNotification"}
     if(event.target.value && event.target.value !== name){
       notification.content = `${name} has changed their name to ${event.target.value}.`
       this.setState({currentUser:{name: event.target.value}})
-      this.socket.send(JSON.stringify(notification))
     } else if (!event.target.value && name !== "Anonymous"){
-        notification.content = `${name} has changed their name to Anonymous.`
-        this.setState({currentUser:{name: "Anonymous"}})
-        this.socket.send(JSON.stringify(notification))
+      notification.content = `${name} has changed their name to Anonymous.`
+      this.setState({currentUser:{name: "Anonymous"}})
       }
+    this.socket.send(JSON.stringify(notification))
     }
 
   componentDidMount() {
@@ -54,8 +50,7 @@ class App extends Component {
     this.socket.onopen = () => {
       console.log("Connected to server");
     }
-
-    //Simulates an incoming message with a timeout function
+    //Simulates an incoming welcome message with a timeout function
     setTimeout(() => {
       console.log("Simulating welcome message");
       // Add a new message to the list of messages in the data store
@@ -71,17 +66,17 @@ class App extends Component {
     }, 800);
 
     this.socket.onmessage = (event) => {
+      //Turns data back into an object and adds to messages
       const data = JSON.parse(event.data);
       const messages = this.state.messages.concat(data);
-      // The socket event data is encoded as a JSON string.
-      // This line turns it into an object
+      //will add to messages if any type of incoming message
       switch(data.type) {
         case "incomingMessage":
         case "incomingImage":
         case "incomingNotification":
           // handle incoming messages, notifications, images
           this.setState({messages: messages});
-          this.scrollToTop()
+          this.scrollToBot()
           break;
         case "userCountChanged":
           // handle username changes
@@ -99,7 +94,6 @@ class App extends Component {
   }
 
   render() {
-    // console.log("Rendering <App/>")
     return (
       <div>
         <nav className="navbar">
