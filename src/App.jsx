@@ -61,7 +61,7 @@ class App extends Component {
       // Update the state of the app component.
       // Calling setState will trigger a call to render() in App and all child components.
       this.setState({messages: messages});
-    }, 1000);
+    }, 800);
 
     this.socket.onmessage = (event) => {
       const data = JSON.parse(event.data);
@@ -70,19 +70,17 @@ class App extends Component {
       // This line turns it into an object
       switch(data.type) {
         case "incomingMessage":
-          this.setState({messages: messages});
-          // handle incoming message
-          break;
+        case "incomingImage":
         case "incomingNotification":
-          this.setState({messages: messages})
-          // handle incoming notification
+          // handle incoming messages, notifications, images
+          this.setState({messages: messages});
           break;
         case "userCountChanged":
+          // handle username changes
           this.setState({userCount: data.userCount})
           break;
         case "colorAssign":
           // handle colour assignment for user
-          console.log('RECEIVED COLOR');
           this.setState({color: data.color});
           break;
         default:
@@ -98,7 +96,7 @@ class App extends Component {
       <div>
         <nav className="navbar">
           <a href="/" className="navbar-brand" >Chatty</a>
-          <div id="userCount"> {this.state.userCount} Users Online </div>
+          <div id="userCount"> {this.state.userCount} User(s) Online </div>
         </nav>
         <MessageList messages={this.state.messages} color={this.state.color}>
           <main className="messages"/>
