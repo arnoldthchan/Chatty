@@ -2,7 +2,7 @@ Chatty
 =====================
 
 Basic messaging app using react and websockets
-### Usage
+### Getting Started
 Install the dependencies and start the server.
 
 ```
