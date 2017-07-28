@@ -3,6 +3,12 @@ import ReactDOM from 'react-dom';
 import MessageList from './MessageList.jsx';
 import ChatBar from './ChatBar.jsx';
 
+function scrollToTop(){
+  console.log('TOP')
+   var element = document.getElementById('message-list');
+   element.scrollTop = element.scrollHeight - element.clientHeight;
+}
+
 class App extends Component {
   constructor(props) {
     super(props);
@@ -74,6 +80,7 @@ class App extends Component {
         case "incomingNotification":
           // handle incoming messages, notifications, images
           this.setState({messages: messages});
+          scrollToTop()
           break;
         case "userCountChanged":
           // handle username changes
@@ -96,8 +103,8 @@ class App extends Component {
       <div>
         <nav className="navbar">
           <a href="/" className="navbar-brand" >Chatty</a>
-          <div id="userCount"> {this.state.userCount} User(s) Online </div>
         </nav>
+        <div id="userCount"> {this.state.userCount} User(s) Online </div>
         <MessageList messages={this.state.messages} color={this.state.color}>
           <main className="messages"/>
         </MessageList>
