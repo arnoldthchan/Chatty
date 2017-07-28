@@ -3,11 +3,7 @@ import ReactDOM from 'react-dom';
 import MessageList from './MessageList.jsx';
 import ChatBar from './ChatBar.jsx';
 
-function scrollToTop(){
-  console.log('TOP')
-   var element = document.getElementById('message-list');
-   element.scrollTop = element.scrollHeight - element.clientHeight;
-}
+
 
 class App extends Component {
   constructor(props) {
@@ -32,6 +28,11 @@ class App extends Component {
       this.socket.send(JSON.stringify(newMessage));
       event.target.value = "";
     }
+  }
+
+  scrollToTop = () => {
+     var messageList = document.getElementById('message-list');
+     messageList.scrollTop = messageList.scrollHeight - messageList.clientHeight;
   }
 
   postNotification = (event) => {
@@ -80,7 +81,7 @@ class App extends Component {
         case "incomingNotification":
           // handle incoming messages, notifications, images
           this.setState({messages: messages});
-          scrollToTop()
+          this.scrollToTop()
           break;
         case "userCountChanged":
           // handle username changes
